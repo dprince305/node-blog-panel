@@ -485,12 +485,12 @@
 
             <div class="mb-4">
                 <h2 class="font-manrope text-4xl font-bold text-gray-900 text-center mb-4">Our latest blog</h2>
-                <div class="flex">
+                <div class="flex flex-wrap">
                     <% blogData.forEach((blogs)=>{ %>
                         <div class="group w-4/12 border border-gray-300 rounded-2xl mb-4 mx-4">
                             <div class="flex items-center">
-                                <img src="<%=blogs.path%>" alt="blogs img" class="rounded-t-2xl object-cover"
-                                    width="500" height="300px">
+                                <img src="<%=blogs.path%>" alt="blogs img" class="rounded-t-2xl object-cover max-h-120"
+                                    width="500" height="300" />
                             </div>
                             <div class="p-4 lg:p-6 transition-all duration-300 rounded-b-2xl group-hover:bg-gray-50">
                                 <span class="text-indigo-600 font-medium mb-3 block">

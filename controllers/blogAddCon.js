@@ -7,17 +7,18 @@ const blogAdd = (req, res) => {
 }
 
 const blogAddData = async (req, res) => {
-
-    const blogData = new blogModel({
-        path: req.file.path,
-        title: req.body.title,
-        description: req.body.description,
-        date: req.body.date
-    })
-
-    // console.log("blogData", blogData);
-
     try {
+        const blogData = new blogModel({
+            path: req.file.path,
+            title: req.body.title,
+            description: req.body.description,
+            date: req.body.date,
+            user_id: req.user._id
+        })
+
+        // console.log("blogData", blogData);
+
+
         const blog = await blogData.save();
         // console.log("blog", blog);
         res.redirect('/blog');
