@@ -65,4 +65,5 @@ const blogDelete = async (req, res) => {
     res.redirect('/blog');
 }
 
+
 module.exports = { blogAdd, blogAddData, blogEdit, blogUpdate, blogDelete };

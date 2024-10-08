@@ -7,6 +7,7 @@ const userCon = require('../controllers/userCon');
 const logoutCon = require('../controllers/logoutCon');
 const blogCon = require('../controllers/blogCon');
 const blogAddCon = require('../controllers/blogAddCon');
+const changePwdCon = require('../controllers/changePwdCon');
 const upload = require('../middleware/multer');
 const passport = require('../middleware/passportConf');
 const isAuth = require('../middleware/isAuth');
@@ -33,6 +34,18 @@ router.post('/addBlogData', upload.single('blogImg'), blogAddCon.blogAddData);
 router.get('/blog-edit/:id', blogAddCon.blogEdit);
 router.post('/blog-update/:id', upload.single('blogImg'), blogAddCon.blogUpdate);
 
-router.get('/blog-delete/:id', blogAddCon.blogDelete);
+router.get('/blog-delete/:id', isAuth, blogAddCon.blogDelete);
+
+router.get('/changepassword', isAuth, changePwdCon.changePassword);
+router.post('/changePasswordData', changePwdCon.changePasswordData);
+
+router.get('/forgotPassword', changePwdCon.forgotPassword);
+router.post('/forgotPasswordData', changePwdCon.forgotPasswordData);
+
+router.get('/otp/:id', changePwdCon.otp);
+router.post('/otpCheck/:id', changePwdCon.otpCheck);
+
+router.get('/newPass/:id', changePwdCon.newPass);
+router.post('/newPassWord/:id', changePwdCon.newPassWord);
 
 module.exports = router;
