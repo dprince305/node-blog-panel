@@ -2,6 +2,18 @@ const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const otpGenerator = require('otp-generator');
+const nodemailer = require('nodemailer');
+const randomstring = require("randomstring");
+
+const transpoter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "dholariyaprince15@gmail.com",
+        pass: "oljqpooxmgfaffuh"
+    },
+});
 
 let myOTP = null;
 
@@ -41,7 +53,12 @@ const changePasswordData = (req, res) => {
         } else {
             res.redirect('/change-password');
         }
+
+
     })
+
+
+
 }
 
 const forgotPassword = (req, res) => {
@@ -51,20 +68,49 @@ const forgotPassword = (req, res) => {
 const forgotPasswordData = async (req, res) => {
 
     const { email } = req.body;
-    const userEmail = await userModel.findOne({ email: email });
 
-    if (userEmail) {
+    try {
 
-        const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
-        console.log("user OTP", otp);
+        const userEmail = await userModel.findOne({ email: email });
 
-        myOTP = otp;
+        if (userEmail) {
 
-        res.redirect(`/otp/${userEmail._id}`);
+            // const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+            // console.log("user OTP", otp);
 
-    } else {
+            // myOTP = otp;
 
-        res.redirect('/login');
+            const token = randomstring.generate(10);
+            console.log("token", token);
+
+            await userModel.updateOne({ _id: userEmail._id }, { tokenReset: token });
+
+
+            const link = `http://localhost:3004/newPass/${userEmail._id}`;
+            // console.log("link", link);
+
+            const mailOptions = {
+                from: "dholariyaprince15@gmail.com",
+                to: userEmail.email,
+                subject: "Reset Password",
+                text: `Click on link to reset your password ${link}`,
+            };
+
+            transpoter.sendMail(mailOptions, (err, data) => {
+                if (err) {
+                    console.log("error", err);
+                } else {
+                    console.log("Email sent:", data.response);
+                    res.send("Email sent check your email");
+                    // res.redirect(`/otp/${userEmail._id}`);
+                }
+            });
+        } else {
+            console.log("user not found");
+            res.redirect('/login');
+        }
+    } catch (error) {
+        res.redirect('/forgotPassword');
     }
 }
 
@@ -85,8 +131,31 @@ const otpCheck = (req, res) => {
 
 }
 
-const newPass = (req, res) => {
-    res.render('new-pass', { id: req.params.id });
+const newPass = async (req, res) => {
+
+    const { id } = req.params;
+    console.log("user id", id);
+
+    try {
+
+        const user = await userModel.findOne({ _id: id });
+
+        if (user) {
+            console.log("user", user);
+            if (user.tokenReset) {
+                console.log("token", user.tokenReset);
+                res.render('new-pass', { id: req.params.id });
+            } else {
+                console.log("invalid token");
+                res.send("invalid url");
+            }
+        } else {
+            console.log("invalid token");
+        }
+    } catch (error) {
+        console.log("error", error);
+    }
+    // res.render('new-pass', { id: req.params.id });
 }
 
 const newPassWord = (req, res) => {
@@ -104,7 +173,7 @@ const newPassWord = (req, res) => {
             }
 
             try {
-                const newPass = await userModel.updateOne({ _id: req.params.id }, { password: hash });
+                const newPass = await userModel.updateOne({ _id: req.params.id }, { password: hash, tokenReset: null });
                 console.log("newPass", newPass);
 
                 res.redirect('/login');
@@ -123,5 +192,6 @@ const newPassWord = (req, res) => {
     }
 
 }
+
 
 module.exports = { changePassword, changePasswordData, forgotPassword, forgotPasswordData, otp, otpCheck, newPass, newPassWord };

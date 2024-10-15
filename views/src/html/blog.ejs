@@ -503,6 +503,18 @@
                                 <p class="text-gray-500 leading-6 mb-1">
                                     <%=blogs.description%>
                                 </p>
+                                <button class="btn btn-secondary btn-sm toggle-comments" id="toggleComments<%= blogs._id %>">Show Comments</button>
+                                            <ul class="comments-list list-unstyled" id="commentsList<%= blogs._id %>" style="display: none;">
+                                             
+                                            </ul>
+                                <!-- Comment Form -->
+                                <form action="/blog/<%= blogs._id %>/comments" method="POST" class="mt-2">
+                                    <div class="form-group">
+                                        <label for="comment">Add a comment:</label>
+                                        <input name="text" id="comment<%= blogs._id %>" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                </form>
                             </div>
                         </div>
 
@@ -620,6 +632,21 @@
 
     <!-- Theme JS -->
     <script src="./assets/js/theme.bundle.js"></script>
+
+    <script>
+        document.querySelectorAll('.toggle-comments').forEach(button => {
+        button.addEventListener('click', () => {
+            const commentsList = document.getElementById(`commentsList${button.id.replace('toggleComments', '')}`);
+            if (commentsList.style.display === 'none' || commentsList.style.display === '') {
+                commentsList.style.display = 'block';
+                button.textContent = 'Hide Comments';
+            } else {
+                commentsList.style.display = 'none';
+                button.textContent = 'Show Comments';
+            }
+        });
+    });
+    </script>
 </body>
 
 </html>

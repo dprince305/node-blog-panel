@@ -22,6 +22,7 @@
     "otp-generator": "^4.0.1",
     "pagedone": "^1.2.2",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "randomstring": "^1.3.0"
   }
 }

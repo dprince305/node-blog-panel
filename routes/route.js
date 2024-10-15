@@ -11,6 +11,8 @@ const changePwdCon = require('../controllers/changePwdCon');
 const upload = require('../middleware/multer');
 const passport = require('../middleware/passportConf');
 const isAuth = require('../middleware/isAuth');
+const topics = require('../controllers/topicscon');
+const comment = require('../controllers/comentcon');
 
 router.get('/', isAuth, controller.index);
 
@@ -47,5 +49,15 @@ router.post('/otpCheck/:id', changePwdCon.otpCheck);
 
 router.get('/newPass/:id', changePwdCon.newPass);
 router.post('/newPassWord/:id', changePwdCon.newPassWord);
+
+router.get('/addTitle',topics.addTitle);
+router.post('/titleAdded', topics.titleAdded);
+router.get('/deleteTitle/:id', topics.deleteTitle);
+router.get('/subTitle/', topics.subTitle);
+router.post('/subTitlePost/:id', topics.subTitlePost);
+
+router.get('/:id/comments',comment.getComments);
+router.post('/blog/:id/comments',comment.addComment);
+
 
 module.exports = router;
